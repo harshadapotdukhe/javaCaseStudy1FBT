@@ -1,101 +1,70 @@
 package com.javacasestudy1bm;
+import java.time.LocalDate;
+import java.time.LocalTime;
+//import java.time.temporal.ChronoUnit;
 
-public class LoanAccount extends BankAccount {
-	private double interestRate;
-    private int tenureMonths;
-    private double emiPayment;
-    private int transactionCount;
-    private double totalRepaid;
+public class TransactionHistory {
+	private int referenceId;
+    private String type;
+    private double amount;
+    private LocalDate transactionDate;
+    private LocalTime transactionTime;
 
-    public LoanAccount(long accountNo, String accountHolderName, double loanAmount, double interestRate, int tenureMonths) {
-        super(accountNo, accountHolderName, -loanAmount, "Loan");
-        this.interestRate = interestRate;
-        this.tenureMonths = tenureMonths;
-
-        this.emiPayment = calculateEMI();        // Calculate initial EMI
-        this.emiPayment = Math.round(emiPayment * 100.0) / 100.0; // Round and store
-
-        this.transactionCount = 0;
-        this.totalRepaid = 0;
+    public TransactionHistory(int referenceId, String type, double amount, LocalDate transactionDate, LocalTime transactionTime) {
+        this.referenceId = referenceId;
+        this.type = type;
+        this.amount = amount;
+        this.transactionDate = transactionDate;
+        this.transactionTime = transactionTime;
     }
 
-    private double calculateEMI() {
-        double monthlyInterestRate = (interestRate / 100) / 12;
-        double loanAmount = Math.abs(getCurrentBalance());
-        return (loanAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, tenureMonths)) /
-               (Math.pow(1 + monthlyInterestRate, tenureMonths) - 1);
+    public LocalDate getTransactionDate() {
+        return transactionDate;
     }
 
-    public double calculateInterest() {
-        double loanAmount = Math.abs(getCurrentBalance());
-        return loanAmount * (interestRate / 100) * (tenureMonths / 12.0);
+    public void setTransactionDate(LocalDate transactionDate) {
+        this.transactionDate = transactionDate;
     }
 
-    public boolean payEMI(double amount) {
-        if (amount < emiPayment) { // Use the ROUNDED emiPayment here
-            System.out.println("Error: Minimum EMI payment required: ₹" + emiPayment); // Display rounded value
-            return false;
-        }
-
-        double remainingBalance = getCurrentBalance() + amount;
-        if (remainingBalance > 0) {  // Prevent overpayment
-            System.out.println("You are paying extra. Adjusting to final EMI payment.");
-            amount = -getCurrentBalance();  // Final payment clears the loan
-        }
-
-        setCurrentBalance(getCurrentBalance() + amount); // Update balance
-        transactionCount++;
-        totalRepaid += amount;
-
-        System.out.println("Payment of ₹" + amount + " received. Remaining Loan Balance: ₹" + getRemainingLoanAmount()); // Use getRemainingLoanAmount()
-
-        if (getCurrentBalance() == 0) {
-            System.out.println("Congratulations! Your loan is fully repaid.");
-        }
-        return true;
+    public LocalTime getTransactionTime() {
+        return transactionTime;
     }
 
-
-    public boolean applyLateFee() {
-        if (isLoanOverdue()) {
-            double lateFee = Math.abs(getCurrentBalance()) * 0.02;
-            setCurrentBalance(getCurrentBalance() - lateFee);
-            System.out.println("Late fee of ₹" + lateFee + " applied. New Loan Balance: ₹" + getRemainingLoanAmount()); // Use getRemainingLoanAmount()
-            return true;
-        }
-        return false;
+    public void setTransactionTime(LocalTime transactionTime) {
+        this.transactionTime = transactionTime;
     }
 
-    private boolean isLoanOverdue() {
-       // return transactionCount < tenureMonths; // Original logic (simple but might not be accurate enough)
-        // Improved overdue check (needs loan start date):
-        //  (You'll need to add a loanStartDate field to LoanAccount and initialize it)
-        //  LocalDate dueDate = loanStartDate.plusMonths(transactionCount);
-        //  return LocalDate.now().isAfter(dueDate);
-
-        // Simpler Overdue Check (For testing)
-        return transactionCount < tenureMonths;
+    public int getReferenceId() {
+        return referenceId;
     }
 
-    public double getAmountRepaid() {
-        return totalRepaid;
+    public void setReferenceId(int referenceId) {
+        this.referenceId = referenceId;
     }
 
-    public double getRemainingLoanAmount() {
-        return Math.abs(getCurrentBalance());
+    public String getType() {
+        return type;
     }
 
-    @Override
-    public void withdraw(double amount) {
-        System.out.println("Withdrawals are not allowed from Loan Accounts.");
+    public void setType(String type) {
+        this.type = type;
     }
 
-    @Override
-    public void deposit(double amount) {
-        super.deposit(amount);
-        totalRepaid += amount;
-        if (getCurrentBalance() == 0) {
-            System.out.println("Loan fully repaid.");
-        }
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void displatSingleTransaction(){
+        System.out.println("Reference Id: " + this.getReferenceId());
+        System.out.println("Type of Transaction: " + this.getType());
+        System.out.println(("Transaction Amount: ") + this.getAmount());
+        System.out.println("Transaction Date: " + this.getTransactionDate());
+        System.out.println("Transaction Time: " + this.getTransactionTime());
+        System.out.println("------***-----");
     }
 }
+
